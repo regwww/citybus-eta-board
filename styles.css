@@ -126,6 +126,40 @@ body{
 .settings-actions{margin-top:auto}
 .primary-btn{width:100%;background:var(--amber);color:#0b1020;border:0;font-family:inherit;font-weight:900;font-size:16px;padding:13px;border-radius:11px;cursor:pointer}
 
+/* OPERATOR TABS */
+.op-tabs{display:flex;gap:6px;overflow-x:auto;padding:6px 0 16px;border-bottom:1px solid var(--border);margin-bottom:20px;-webkit-overflow-scrolling:touch}
+.op-tab{background:var(--panel);border:1px solid var(--border);color:var(--muted);font-family:inherit;font-weight:800;font-size:14px;padding:9px 16px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.2s}
+.op-tab:hover{color:var(--text);border-color:var(--border-strong)}
+.op-tab.active{background:var(--amber);color:#0b1020;border-color:var(--amber)}
+
+/* SETTINGS DYNAMIC BODY */
+.set-row{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.set-row>label{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.set-row input,.set-row select,.set-row textarea{background:var(--panel);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:16px;padding:11px 12px;border-radius:10px;outline:none;width:100%}
+.set-row input:focus,.set-row select:focus,.set-row textarea:focus{border-color:var(--amber)}
+.dir-btns{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:4px;gap:2px}
+.dir-btns .dir-btn{flex:1}
+.station-list{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto}
+.station-opt{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:11px 13px;cursor:pointer;font-weight:700;font-size:15px;transition:.15s}
+.station-opt .en{font-size:12px;color:var(--muted);font-weight:500;margin-left:6px}
+.station-opt:hover{border-color:var(--amber)}
+.station-opt.selected{border-color:var(--amber);background:var(--panel2);color:var(--amber-soft)}
+
+/* ETA GROUP CARDS (multi-route board) */
+.eta-cards{grid-template-columns:1fr;gap:12px}
+.eta-card .grp-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.eta-card .route-badge{min-width:auto;padding:5px 12px;font-size:20px;border-radius:9px;background:linear-gradient(145deg,#ffd200,#ffb020);color:#0b1020;font-weight:900;font-family:"JetBrains Mono",monospace}
+.eta-card .grp-dest{font-weight:700;font-size:15px;flex:1;min-width:0}
+.eta-card .grp-plat{font-size:12px;color:var(--muted);background:var(--panel2);border:1px solid var(--border);padding:3px 9px;border-radius:999px;font-weight:700}
+.eta-card .grp-etas{display:flex;flex-direction:column}
+.eta-row{display:flex;align-items:baseline;gap:10px;padding:5px 0;border-top:1px solid var(--border)}
+.eta-row:first-child{border-top:0}
+.eta-row .eta-seq{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;min-width:46px}
+.eta-row .eta-clock{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--amber-soft);font-size:16px;min-width:46px}
+.eta-row .eta-mins{font-weight:700;font-size:15px;color:var(--text);flex:1}
+.eta-row .eta-mins.soon{color:var(--green)}
+.eta-row .eta-rmk{font-size:12px;color:var(--muted)}
+
 /* LOADER */
 .loader{display:inline-block;width:18px;height:18px;border:2px solid var(--muted);border-top-color:var(--amber);border-radius:50%;animation:spin .7s linear infinite}
 
