@@ -1,0 +1,7 @@
+.DS_Store
+*.log
+node_modules/
+verify_*.png
+mobile_*.png
+jsrepl*.json
+jsrepl_*.json
