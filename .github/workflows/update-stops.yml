@@ -1,0 +1,64 @@
+name: Update stops database & deploy
+
+# 重新生成站點資料庫（stops_db.json / routes_dest.json）並部署到 GitHub Pages。
+# 城巴站點變動不頻繁，每週一執行一次即可保持新鮮；可隨時手動觸發。
+
+on:
+  schedule:
+    # 每週一 02:00 UTC（香港時間 10:00）
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # commit & push 更新後的 JSON
+  pages: write     # 部署到 Pages
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Build stops database
+        run: python3 build_stops.py
+
+      - name: Detect changes
+        id: changes
+        run: |
+          if git diff --quiet stops_db.json routes_dest.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit & push changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "github-actions"
+          git add stops_db.json routes_dest.json
+          git commit -m "data: refresh stops database ($(date -u +'%Y-%m-%d'))"
+          git push
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

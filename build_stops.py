@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
-"""Build a complete Citybus (CTB) stops database from the official open-data API."""
-import json, time, sys
+"""Build Citybus (CTB) stops database + routes destination map from the official open-data API.
+
+Self-contained: fetches the route list from the API itself (no routes.json needed).
+Outputs:
+  - stops_db.json     : { stop_id: {id, name_tc, name_en, name_sc, lat, long} }
+  - routes_dest.json  : { route: {O: dest_tc, I: orig_tc} }
+"""
+import json, time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import urllib.request
 
@@ -13,7 +19,7 @@ def get(url, tries=4):
             req = urllib.request.Request(url, headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=20) as r:
                 return json.load(r).get("data")
-        except Exception as e:
+        except Exception:
             if i == tries - 1:
                 return None
             time.sleep(1 + i)
@@ -35,9 +41,20 @@ def fetch_stop(stop_id):
     return stop_id, None
 
 def main():
-    routes = json.load(open("routes.json"))["data"]
+    print("Fetching route list...", flush=True)
+    routes = get(f"{BASE}/route/ctb") or []
     route_nums = [r["route"] for r in routes]
     print(f"Routes: {len(route_nums)}", flush=True)
+
+    # routes_dest.json: route -> {O: dest_tc (outbound destination), I: orig_tc (inbound origin)}
+    routes_dest = {}
+    for r in routes:
+        routes_dest[r["route"]] = {
+            "O": r.get("dest_tc", ""),
+            "I": r.get("orig_tc", ""),
+        }
+    json.dump(routes_dest, open("routes_dest.json", "w"), ensure_ascii=False, sort_keys=True)
+    print(f"Saved routes_dest.json: {len(routes_dest)} routes", flush=True)
 
     all_stops = set()
     t0 = time.time()
@@ -67,7 +84,7 @@ def main():
             if i % 200 == 0:
                 print(f"  stops {i}/{len(all_stops)}  {time.time()-t0:.0f}s", flush=True)
 
-    json.dump(stops_db, open("stops_db.json", "w"), ensure_ascii=False)
+    json.dump(stops_db, open("stops_db.json", "w"), ensure_ascii=False, sort_keys=True)
     print(f"Saved stops_db.json: {len(stops_db)} stops in {time.time()-t0:.0f}s", flush=True)
 
 if __name__ == "__main__":
